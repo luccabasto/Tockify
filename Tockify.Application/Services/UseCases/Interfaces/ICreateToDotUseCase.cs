@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tockify.Application.DTOs;
+﻿using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.UseCases.Interfaces
 {
     public interface ICreateToDotUseCase
     {
         Task<ToDoDto> ExecuteAsync(CreateTaskItemCommand command);
-
+        Task ExecuteAsync(CreateToDoCommand command);
     }
 }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.UseCases.Interfaces
 {
-    class ICreateTaskItemUseCase
+    public interface ICreateTaskItemUseCase
     {
+        Task<TaskItemDto> ExecuteAsync(CreateTaskItemCommand command);
     }
 }

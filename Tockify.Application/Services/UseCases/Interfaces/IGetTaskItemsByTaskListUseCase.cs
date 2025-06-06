@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.UseCases.Interfaces
 {
-    class IGetTaskItemsByTaskListUseCase
+    public interface IGetTaskItemsByTaskListUseCase
     {
+        Task<IEnumerable<ToDoDto>> ExecuteAsync(Guid userId);
     }
 }
