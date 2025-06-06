@@ -1,15 +1,16 @@
-﻿using Tockify.Domain.Enums;
-using Tockify.Domain.Models;
+﻿
+using Tockify.Domain.Enums;
 using Tockify.Domain.Repository.Interface;
 using BCrypt.Net;
+using Tockify.Domain.Models;
 
 namespace Tockify.Domain.Repository.DomainService
 {
-    public class UserDomainService
+    public class ClientUserDomainServiceRepository
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IClientUserRepository _userRepository;
 
-        public UserDomainService(IUserRepository userRepository)
+        public ClientUserDomainServiceRepository(IClientUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -29,15 +30,7 @@ namespace Tockify.Domain.Repository.DomainService
             if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
                 throw new ArgumentNullException(nameof(password), "Senha deve ter pelo menos 6 caracteres.");
 
-            var cryptoPassword = BCrypt.Net.BCrypt.HashPassword(password.Trim(), BCrypt.Net.BCrypt.GenerateSalt(12));
-            var user = new User(
-                name: name.Trim(),
-                email: email.Trim().ToLower(),
-                password: password.Trim(),
-                profile: profile
-   );
-
-            await _userRepository.AddUserAsync(user);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(password.Trim(), BCrypt.Net.BCrypt.GenerateSalt(12));
         }
     }
     

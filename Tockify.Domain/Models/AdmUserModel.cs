@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tockify.Domain.Models
 {
-    public class UserAdmModel
+    public class AdmUserModel
     {
         public int Id { get;  private set; }
         public string Name { get; private set; }

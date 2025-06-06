@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tockify.Domain.Models;
+﻿using Tockify.Domain.Models;
 
 namespace Tockify.Domain.Repository.Interface
 {
-    public interface IUserAdmRepository
+    public interface IAdmUserRepository
     {
-        Task<IEnumerable<UserAdmModel>> GetAllUserEmailsAsync();
+        Task<IEnumerable<AdmUserModel>> GetAllUserEmailsAsync();
         Task<TaskItemModel> IsEmailRegisteredAsync(string email);
         Task<TaskItemModel> IsUserActiveAsync(Guid userId);
         Task ActivateUserAsync(Guid userId);
