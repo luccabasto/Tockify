@@ -1,5 +1,4 @@
-﻿
-namespace Tockify.Application.DTOs
+﻿namespace Tockify.Application.DTOs
 {
     public class CreateToDoCommand
     {
