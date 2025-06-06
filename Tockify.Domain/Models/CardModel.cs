@@ -28,5 +28,9 @@ namespace Tockify.Domain.Models
             CreatedAt = DateTime.Now;
         
         }
+
+        public CardModel()
+        {
+        }
     }
 }
