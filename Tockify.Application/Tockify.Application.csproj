@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Mappings\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Services\UseCases\" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tockify.Domain\Tockify.Domain.csproj" />
   </ItemGroup>
 
 </Project>

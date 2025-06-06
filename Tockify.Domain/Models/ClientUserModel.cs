@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tockify.Domain.Enums;
+﻿using Tockify.Domain.Enums;
 
 namespace Tockify.Domain.Models
 {
-   public class UserModel
+   public class ClientUserModel
     {
+
+        public ClientUserModel()
+        {
+
+        }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -21,7 +21,7 @@ namespace Tockify.Domain.Models
 
         public List<CardModel>? Tasks { get; set; } = new List<CardModel>();
 
-        public UserModel(string name, string email, string password, UserProfile userProfile)
+        public ClientUserModel(string name, string email, string password, UserProfile userProfile)
         {
             Id = Guid.NewGuid();
             Name = name?.Trim() ?? throw new ArgumentNullException(nameof(name), "Nome não pode ser vazio.");

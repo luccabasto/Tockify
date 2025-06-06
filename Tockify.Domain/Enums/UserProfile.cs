@@ -8,6 +8,7 @@ namespace Tockify.Domain.Enums
 {
     public enum UserProfile
     {
+        Id,
         Admin,
         Client,
     }
