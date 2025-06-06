@@ -46,17 +46,20 @@ namespace Tockify.Infrastructure.Repositories
             user.Password = password;
             user.Profile = UserProfile.Client;
             user.IsActive = true;
+            user.CreatedAt = DateTime.UtcNow;
 
             await _context.ClientUsers.InsertOneAsync(user);
             return user;
         }
 
         // Atualiza dados do usuário existente (Name, Email, Password, IsActive)
-        public async Task<ClientUserModel> UpdateClientUserByIdAsync(ClientUserModel user, Guid id)
+        public async Task<ClientUserModel> UpdateClientUserByIdAsync(ClientUserModel user, string email, string password)
         {
             var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, user.Id);
             var update = Builders<ClientUserModel>.Update
                 .Set(u => u.Name, user.Name.Trim())
+                .Set(u => u.Email, email.ToLower().Trim())
+                .Set(u => u.Password, password)
                 .Set(u => u.IsActive, user.IsActive);
 
             await _context.ClientUsers.UpdateOneAsync(filter, update);
@@ -64,17 +67,17 @@ namespace Tockify.Infrastructure.Repositories
         }
 
         // Exclui usuário pelo Id
-        public async Task<bool> DeleteClientUserByIdAsync(ClientUserModel user, Guid id)
+        public async Task<bool> DeleteClientUserByIdAsync(Guid id)
         {
             var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
             var result = await _context.ClientUsers.DeleteOneAsync(filter);
             return result.DeletedCount > 0;
         }
 
-        // Verifica existência de usuário por Id (retorna true/false)
-        public async Task<bool> ClientUserExistsAsync(ClientUserModel user, Guid id)
+        // Verifica existência de usuário por email (retorna true/false)
+        public async Task<bool> ClientUserExistsAsync(string email)
         {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Email, email.ToLower().Trim());
             return await _context.ClientUsers.Find(filter).AnyAsync();
         }
     }
