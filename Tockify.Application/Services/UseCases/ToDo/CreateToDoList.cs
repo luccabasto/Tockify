@@ -45,9 +45,5 @@ namespace Tockify.Application.Services.UseCases.ToDo
             return dto;
         }
 
-        public Task<ToDoDto> ExecuteAsync(CreateTaskItemCommand command)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
