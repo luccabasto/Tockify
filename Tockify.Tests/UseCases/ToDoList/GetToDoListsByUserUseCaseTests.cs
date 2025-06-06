@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Tockify.Application.Services.UseCases.Implementations;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
@@ -15,56 +19,43 @@ namespace Tockify.Tests.UseCases.TaskList
 
         public GetTaskListsByUserUseCaseTests()
         {
+            // AutoMapperFixture.MapperInstance deve expor um IMapper configurado com MappingProfile
             _mapper = AutoMapperFixture.MapperInstance;
         }
 
         [Fact(DisplayName = "GetTaskListsByUserUseCase deve retornar lista mapeada corretamente")]
-        public async Task ExecuteAsyncWhenCalledReturnsTaskListDtoList(List<CardModel> fakeEntities)
+        public async Task ExecuteAsyncWhenCalledReturnsTaskListDtoList()
         {
             // Arrange
-            var mockRepo = new Mock<IToDoListRepository>();
 
+            // 1) Cria um Guid de usuário fictício
+            var userIdGuid = Guid.NewGuid();
+
+            // 2) Cria lista fake de TaskListModel
             var fakeEntities = new List<CardModel>
             {
-                new CardModel {
-                    Id          = Guid.NewGuid().ToString(),
-                    UserId      = new ClientUserModel
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "User 1",
-                        Email = "user1@example.com",
-                        Password = "password1",
-                        IsActive = true
-                    },
-                    Name        = "Lista 1",
-                    Description = "Descrição 1",
-                    CreatedAt   = DateTime.UtcNow.AddDays(-1),
-                    DueDate     = DateTime.UtcNow.AddDays(1)
-                },
-                new CardModel
-                {
-                    Id          = Guid.NewGuid().ToString(),
-                    UserId      = new ClientUserModel
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "User 2",
-                        Email = "user2@example.com",
-                        Password = "password2",
-                        IsActive = true
-                    },
-                    Name        = "Lista 2",
-                    Description = "Descrição 2",
-                    CreatedAt   = DateTime.UtcNow.AddDays(-2),
-                    DueDate     = DateTime.UtcNow.AddDays(2)
-                }
+                // Construtor de TaskListModel: (string userId, string name, string description, DateTime dueDate)
+                new CardModel(
+                    id: Guid.NewGuid().ToString(),
+                    userId: userIdGuid.ToString(), // Corrigido: userIdGuid() -> userIdGuid.ToString()
+                    name: "Lista 1",
+                    dueDate: DateTime.UtcNow.AddDays(1)
+                ),
+                new CardModel(
+                    id: Guid.NewGuid().ToString(),
+                    userId: userIdGuid.ToString(),
+                    name: "Lista 2",
+                    dueDate: DateTime.UtcNow.AddDays(2)
+                )
             };
 
-            var userIdGuid = fakeEntities[0].UserId.Id;
+            // 3) Configura o Mock<IToDoListRepository> (ou ITaskListRepository)
+            var mockRepo = new Mock<IToDoListRepository>();
+            mockRepo
+                .Setup(r => r.GetTasksByUserIdAsync(userIdGuid))
+                .ReturnsAsync(fakeEntities);
 
-            // Simula que o repositório vai retornar a lista acima
-            mockRepo.Setup(r => r.GetTasksByUserIdAsync(userIdGuid))
-                    .ReturnsAsync(fakeEntities);
-
+            // 4) Instancia o Use Case, injetando o mock e o mapper
             var useCase = new GetToDoListsByUserUseCase(mockRepo.Object, _mapper);
 
             // Act
@@ -74,7 +65,6 @@ namespace Tockify.Tests.UseCases.TaskList
             result.Should().HaveCount(2);
             result.First().Name.Should().Be("Lista 1");
             result.Last().Name.Should().Be("Lista 2");
-
             mockRepo.Verify(r => r.GetTasksByUserIdAsync(userIdGuid), Times.Once);
         }
 
@@ -85,8 +75,10 @@ namespace Tockify.Tests.UseCases.TaskList
             var mockRepo = new Mock<IToDoListRepository>();
             var useCase = new GetToDoListsByUserUseCase(mockRepo.Object, _mapper);
 
-            // Act / Assert
+            // Act / Assert: se Guid.Empty for passado, esperamos ArgumentException
             await Assert.ThrowsAsync<ArgumentException>(() => useCase.ExecuteAsync(Guid.Empty));
+
+            // Verifica que o repositório não foi sequer invocado
             mockRepo.Verify(r => r.GetTasksByUserIdAsync(It.IsAny<Guid>()), Times.Never);
         }
     }
