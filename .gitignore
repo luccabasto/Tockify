@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# Build results
+bin/
+obj/
+out/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# User-specific files
+*.sln.docstates
+*.userosscache
+*.suo
+
+# ASP.NET Core
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+secrets.json
+
+# MongoDB (caso tenha arquivos locais
