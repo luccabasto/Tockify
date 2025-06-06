@@ -12,7 +12,12 @@ namespace Tockify.Application.Mappings
             CreateMap<CreateClientUserCommand, ClientUserModel>();
 
             CreateMap<CardModel, ToDoDto>();
+
             CreateMap<CreateToDoCommand, CardModel>();
+    
+            CreateMap<CardModel, ToDoDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId.Id));
+
 
             CreateMap<TaskItemModel, TaskItemDto>();
             CreateMap<CreateTaskItemCommand, TaskItemModel>();

@@ -32,5 +32,12 @@ namespace Tockify.Domain.Models
         public CardModel()
         {
         }
+
+        public CardModel(string id, string userId, string name, DateTime dueDate)
+        {
+            Id = id;
+            Name = name;
+            DueDate = dueDate;
+        }
     }
 }
