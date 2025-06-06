@@ -2,7 +2,7 @@
 
 namespace Tockify.Domain.Repository.Interface
 {
-    public interface ITaskListRepository
+    public interface IToDoListRepository
     {
         Task<IEnumerable<CardModel>> GetTasksByUserIdAsync(Guid userId);
         Task<CardModel?> GetTaskByIdAsync(Guid taskId);
