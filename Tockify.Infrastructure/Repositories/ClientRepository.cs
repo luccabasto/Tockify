@@ -1,98 +1,81 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
 using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
 using Tockify.Infrastructure.Data;
 
-namespace Tockify.Domain.Repository
+namespace Tockify.Infrastructure.Repositories
 {
     public class ClientRepository : IClientUserRepository
     {
-        private readonly TockifyDBContext _dbContext;
-        public ClientRepository(TockifyDBContext tockifyDBContext)
+        private readonly MongoContext _context;
+
+        public ClientRepository(MongoContext mongoContext)
         {
-            _dbContext = tockifyDBContext;
+            _context = mongoContext;
         }
 
-        // Métodos para gerenciar usuários do cliente
+        // Retorna todos usuários cujo Profile == userProfile
         public async Task<List<ClientUserModel>> GetAllClientUsers(UserProfile userProfile)
         {
-            return await _dbContext.ClientUsers.ToListAsync();
+            var filter = Builders<ClientUserModel>.Filter.Eq(x => x.Profile, userProfile);
+            return await _context.ClientUsers.Find(filter).ToListAsync();
         }
 
+        // Retorna usuário por Guid Id
         public async Task<ClientUserModel?> GetUserByIdAsync(Guid id)
         {
-            return await _dbContext.ClientUsers.FirstOrDefaultAsync(x => x.Id == id);
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
+            return await _context.ClientUsers.Find(filter).FirstOrDefaultAsync();
         }
 
+        // Retorna usuário por email (ignorando maiúsculas/minúsculas)
         public async Task<ClientUserModel?> GetUserByEmailAsync(string email)
         {
-            return await _dbContext.ClientUsers
-                .FirstOrDefaultAsync(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Email, email.ToLower().Trim());
+            return await _context.ClientUsers.Find(filter).FirstOrDefaultAsync();
         }
 
-        // CRUD operações para usuários do cliente 
-        public async Task<ClientUserModel> RegisterUserAsync( ClientUserModel clientUser)
+        // Cria um novo usuário
+        public async Task<ClientUserModel> RegisterUserAsync(ClientUserModel user, string email, string password)
         {
-            await _dbContext.ClientUsers.AddAsync(clientUser);
-            await _dbContext.SaveChangesAsync();
+            user.Email = email.ToLower().Trim();
+            if (user.Id == Guid.Empty)
+                user.Id = Guid.NewGuid();
 
-            return clientUser;
+            user.Password = password;
+            user.Profile = UserProfile.Client;
+            user.IsActive = true;
+
+            await _context.ClientUsers.InsertOneAsync(user);
+            return user;
         }
 
+        // Atualiza dados do usuário existente (Name, Email, Password, IsActive)
         public async Task<ClientUserModel> UpdateClientUserByIdAsync(ClientUserModel user, Guid id)
         {
-            // Recebendo o ID do usuário a ser atualizado
-            ClientUserModel? clientById = await GetUserByIdAsync(id);
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, user.Id);
+            var update = Builders<ClientUserModel>.Update
+                .Set(u => u.Name, user.Name.Trim())
+                .Set(u => u.IsActive, user.IsActive);
 
-            // Check se o usuário existe
-            if (clientById == null)
-            {
-                throw new Exception($"Usuário para o ID:{id} não foi encontrado no banco de dados.");
-            }
-
-            // Update propriedades do usuário
-            clientById.Name = user.Name;
-            clientById.Email = user.Email;
-            clientById.Password = user.Password;
-            clientById.Gender = user?.Gender;
-            clientById.IsActive = user.IsActive;
-
-            // Salvando as alterações no banco de dados
-            _dbContext.ClientUsers.Update(clientById);
-            await _dbContext.SaveChangesAsync();
-
-            // Me retorna o usuário atualizado
-            return clientById;
+            await _context.ClientUsers.UpdateOneAsync(filter, update);
+            return user;
         }
 
-        public async Task<string> DeleteClientUserByIdAsync(ClientUserModel user, Guid id)
+        // Exclui usuário pelo Id
+        public async Task<bool> DeleteClientUserByIdAsync(ClientUserModel user, Guid id)
         {
-            ClientUserModel? clientById = await GetUserByIdAsync(id);
-
-            if (clientById == null)
-            {
-                return $"Usuário para o ID:{id} não foi encontrado no banco de dados.";
-            }
-
-            _dbContext.ClientUsers.Remove(clientById);
-            await _dbContext.SaveChangesAsync();
-
-            return "Usuário excluído com sucesso.";
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
+            var result = await _context.ClientUsers.DeleteOneAsync(filter);
+            return result.DeletedCount > 0;
         }
 
-        // Métodos adicionais para gerenciamento de usuários 
-        public async Task<string> ClientUserExistsAsync(ClientUserModel user, Guid id)
+        // Verifica existência de usuário por Id (retorna true/false)
+        public async Task<bool> ClientUserExistsAsync(ClientUserModel user, Guid id)
         {
-            ClientUserModel? clientUserModel = await GetUserByIdAsync(id);
-
-            if (clientUserModel == null)
-            {
-                return $"Usuário {clientUserModel.Name} não se encontra ativo.";
-            }
-
-            return $"Usuário {clientUserModel.Name} está ativo e registrado com sucesso.";
-
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
+            return await _context.ClientUsers.Find(filter).AnyAsync();
         }
     }
 }

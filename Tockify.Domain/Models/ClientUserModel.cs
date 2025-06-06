@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tockify.Domain.Enums;
+﻿using Tockify.Domain.Enums;
 
 namespace Tockify.Domain.Models
 {
