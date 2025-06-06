@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Tockify.Application.DTOs;
+using Tockify.Domain.Models;
 
 namespace Tockify.Application.Mappings
 {
-    class MappingProfile
+    public class MappingProfile : Profile
     {
+        public MappingProfile()
+        {
+            CreateMap<ClientUserModel, ClientUserDto>();
+            CreateMap<CreateClientUserCommand, ClientUserModel>();
+
+            CreateMap<CardModel, ToDoDto>();
+            CreateMap<CreateToDoCommand, CardModel>();
+
+            CreateMap<TaskItemModel, TaskItemDto>();
+            CreateMap<CreateTaskItemCommand, TaskItemModel>();
+        }
     }
 }
