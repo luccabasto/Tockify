@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Tockify.Application.DTOs;
-using Tockify.Application.Services.UseCases.Interfaces;
+using Tockify.Application.Services.Interfaces.ClientUser;
 using Tockify.Domain.Enums;
 using Tockify.Domain.Repository.Interface;
 

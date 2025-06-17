@@ -1,6 +1,6 @@
 ﻿using Tockify.Application.DTOs;
 
-namespace Tockify.Application.Services.UseCases.Interfaces
+namespace Tockify.Application.Services.Interfaces.TaskItem
 {
     public interface ICreateTaskItemUseCase
     {

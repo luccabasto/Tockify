@@ -28,7 +28,7 @@ namespace Tockify.Tests.UseCases.ClientUser
             {
                 new ClientUserModel
                 {
-                    Id        = System.Guid.NewGuid(),
+                    Id        = System.Random.Shared.Next(1, 1000),
                     Name      = "Usuário A",
                     Email     = "a@teste.com",
                     Password  = "senhaA",
@@ -38,7 +38,7 @@ namespace Tockify.Tests.UseCases.ClientUser
                 },
                 new ClientUserModel
                 {
-                    Id        = System.Guid.NewGuid(),
+                    Id        = System.Random.Shared.Next(1, 1000),
                     Name      = "Usuário B",
                     Email     = "b@teste.com",
                     Password  = "senhaB",

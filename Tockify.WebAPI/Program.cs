@@ -1,9 +1,11 @@
 using AutoMapper;
 using Microsoft.OpenApi.Models;
 using Tockify.Application.Mappings;
+using Tockify.Application.Services.Interfaces.ClientUser;
+using Tockify.Application.Services.Interfaces.TaskItem;
+using Tockify.Application.Services.Interfaces.ToDo;
 using Tockify.Application.Services.UseCases.ClientUser;
 using Tockify.Application.Services.UseCases.Implementations;
-using Tockify.Application.Services.UseCases.Interfaces;
 using Tockify.Application.Services.UseCases.TaskItem;
 using Tockify.Application.Services.UseCases.ToDo;
 using Tockify.Domain.Repository.Interface;

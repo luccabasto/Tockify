@@ -4,10 +4,7 @@ namespace Tockify.Domain.Models
 {
     public class TaskItemModel
     {
-        public TaskItemModel()
-        {
-        }
-
+        
         public string Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
@@ -16,6 +13,10 @@ namespace Tockify.Domain.Models
         public StatusTask? Status { get; set; }
         public bool? IsCompleted { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public string ToDoListId { get; set; }
+        public string? ToDoListId { get; set; }
+
+        public TaskItemModel()
+        {
+        }
     }
 }

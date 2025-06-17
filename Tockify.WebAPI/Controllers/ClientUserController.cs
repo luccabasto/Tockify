@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.DTOs;
-using Tockify.Application.Services.UseCases.Interfaces;
+using Tockify.Application.Services.Interfaces.ClientUser;
 
 namespace Tockify.WebAPI.Controllers
 {
@@ -8,40 +8,98 @@ namespace Tockify.WebAPI.Controllers
     /// <summary>
     /// Controller para gerenciar usuários do cliente.
     /// </summary>
+    /// <returns> Operações com o Client User</returns>
     [ApiController]
     [Route("api/[controller]")]
     public class ClientUserController : ControllerBase
     {
         private readonly ICreateClientUserUseCase _createUseCase;
         private readonly IGetAllClientUsersUseCase _getAllUseCase;
+        private readonly IGetClientUserByIdUseCase _getByIdUseCase;
 
         public ClientUserController(
             ICreateClientUserUseCase createUseCase,
-            IGetAllClientUsersUseCase getAllUseCase)
+            IGetAllClientUsersUseCase getAllUseCase,
+            IGetClientUserByIdUseCase getByIdUseCase)
         {
             _createUseCase = createUseCase;
             _getAllUseCase = getAllUseCase;
+            _getByIdUseCase = getByIdUseCase;
         }
 
+
+        /// <summary>
+        /// Retorne todos os usuários do tipo Client.
+        /// </summary>
+        /// <returns>Uma lista de usuários do tipo Client.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClientUserDto>>> GetAll()
         {
-            var dtos = await _getAllUseCase.ExecuteAsync();
+            var dtos = await _getAllUseCase.GetAllClient();
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ClientUserDto>> Create([FromBody] CreateClientUserCommand command)
+        /// <summary>
+        /// Retorna um usuário do tipo Client pelo ID.
+        /// </summary>
+        /// <returns>O usuário encontrado ou uma mensagem de erro.</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClientUserDto>> GetById(int id)
         {
             try
             {
-                var createdDto = await _createUseCase.ExecuteAsync(command);
-                return CreatedAtAction(nameof(GetAll), null, createdDto);
+                var dtos = await _getByIdUseCase.GetByIdAsync(id);
+                var dto = dtos?.FirstOrDefault();
+                if (dto == null)
+                {
+                    return NotFound(new { message = $"Usuário com ID {id} não encontrado." });
+                }
+                return Ok(new { message = "Usuário encontrado com sucesso.", data = dto });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
-    }
+
+        /// <summary>
+        /// Criando um novo usuário do tipo Client.
+        /// </summary>
+        /// <returns>O usuário criado ou uma mensagem de erro.</returns>
+        [HttpPost]
+        public async Task<ActionResult<ClientUserDto>> CreateClient([FromBody] CreateClientUserCommand command)
+        {
+            try
+            {
+                var createdDto = await _createUseCase.CreateClientUser(command);
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Erro ao criar usuário do tipo Client.", error = ex.Message });
+            }
+        }
+
+
+        /// <summary>
+        /// Atualiza um usuário do tipo Client pelo ID.
+        /// </summary>
+        /// <returns>O usuário atualizado ou uma mensagem de erro.</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ClientUserDto>> UpdateClient(int id, [FromBody] UpdateClientUserCommand command)
+        {
+            try
+            {
+                if (id != command.Id)
+                {
+                    return BadRequest(new { message = "ID do usuário não corresponde ao ID do comando." });
+                }
+                var updatedDto = await _createUseCase.UpdateClientUser(command);
+                return Ok(updatedDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Erro ao atualizar usuário do tipo Client.", error = ex.Message });
+            }
+        }
 }

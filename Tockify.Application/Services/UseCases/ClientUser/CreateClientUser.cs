@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Tockify.Application.DTOs;
-using Tockify.Application.Services.UseCases.Interfaces;
+using Tockify.Application.Services.Interfaces.ClientUser;
 using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
@@ -41,7 +41,7 @@ namespace Tockify.Application.Services.UseCases.ClientUser
             // Criar a entidade de domínio
             var entity = new ClientUserModel
             {
-                Id = Guid.NewGuid(),
+                Id = int.MinValue, // O ID será gerado pelo MongoDB
                 Name = command.Name.Trim(),
                 Email = command.Email.Trim().ToLower(),
                 Password = command.Password,

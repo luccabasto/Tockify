@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.DTOs;
-using Tockify.Application.Services.UseCases.Interfaces;
+using Tockify.Application.Services.Interfaces.TaskItem;
+using Tockify.Application.Services.Interfaces.ToDo;
 
 namespace Tockify.WebAPI.Controllers
 {

@@ -34,7 +34,7 @@ namespace Tockify.Tests.UseCases.ClientUser
                     .ReturnsAsync((ClientUserModel u, string e, string p) =>
                     {
                         // Imita “persistência” atribuindo Id e CreatedAt
-                        u.Id = Guid.NewGuid();
+                        u.Id = new Random().Next(1, 1000);
                         u.Profile = UserProfile.Client;
                         u.IsActive = true;
                         u.CreatedAt = DateTime.UtcNow;
