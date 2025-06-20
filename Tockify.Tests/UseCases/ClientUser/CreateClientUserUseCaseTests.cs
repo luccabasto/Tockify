@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿/* using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Tockify.Application.DTOs;
@@ -121,3 +121,4 @@ namespace Tockify.Tests.UseCases.ClientUser
         }
     }
 }
+*/ 

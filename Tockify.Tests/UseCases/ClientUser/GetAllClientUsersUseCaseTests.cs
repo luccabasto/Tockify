@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿/* using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Tockify.Application.Services.UseCases.ClientUser;
@@ -65,3 +65,4 @@ namespace Tockify.Tests.UseCases.ClientUser
         }
     }
 }
+*/

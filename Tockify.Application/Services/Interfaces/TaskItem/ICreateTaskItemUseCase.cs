@@ -1,4 +1,5 @@
-﻿using Tockify.Application.DTOs;
+﻿using Tockify.Application.Command.TaskItem;
+using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.Interfaces.TaskItem
 {

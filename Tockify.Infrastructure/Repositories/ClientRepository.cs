@@ -1,84 +1,77 @@
-﻿using MongoDB.Driver;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using MongoDB.Driver;
 using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
-using Tockify.Infrastructure.Data;
+using Tockify.Infrastructure.Context;
 
 namespace Tockify.Infrastructure.Repositories
 {
-    public class ClientRepository : IClientUserRepository
+    public class ClientUserRepository : IClientUserRepository
     {
-        private readonly MongoContext _context;
+        private readonly IMongoCollection<ClientUserModel> _collection;
+        private readonly IMongoCollection<CounterModel> _counterCollection;
 
-        public ClientRepository(MongoContext mongoContext)
+        public ClientUserRepository(MongoContext context)
         {
-            _context = mongoContext;
+            _collection = context.Database.GetCollection<ClientUserModel>("client_users");
+            _counterCollection = context.Database.GetCollection<CounterModel>("counters");
         }
 
-        // Retorna todos usuários cujo Profile == userProfile
-        public async Task<List<ClientUserModel>> GetAllClientUsers(UserProfile userProfile)
+        private int GetNextSequenceValue(string name)
         {
-            var filter = Builders<ClientUserModel>.Filter.Eq(x => x.Profile, userProfile);
-            return await _context.ClientUsers.Find(filter).ToListAsync();
+            var filter = Builders<CounterModel>.Filter.Eq(c => c.Id, name);
+            var update = Builders<CounterModel>.Update.Inc(c => c.SequenceValue, 1);
+            var options = new FindOneAndUpdateOptions<CounterModel>
+            {
+                ReturnDocument = ReturnDocument.After,
+                IsUpsert = true
+            };
+
+            var result = _counterCollection.FindOneAndUpdate(filter, update, options);
+            return result.SequenceValue;
         }
 
-        // Retorna usuário por Guid Id
-        public async Task<ClientUserModel?> GetUserByIdAsync(Guid id)
+        public async Task<List<ClientUserModel>> GetAllClientUsersAsync(UserProfile profile)
         {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
-            return await _context.ClientUsers.Find(filter).FirstOrDefaultAsync();
+            return await _collection
+                         .Find(u => u.Profile == profile)
+                         .ToListAsync();
         }
 
-        // Retorna usuário por email (ignorando maiúsculas/minúsculas)
+        public async Task<ClientUserModel?> GetUserByIdAsync(int id)
+            => await _collection.Find(u => u.Id == id).FirstOrDefaultAsync();
+
         public async Task<ClientUserModel?> GetUserByEmailAsync(string email)
-        {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Email, email.ToLower().Trim());
-            return await _context.ClientUsers.Find(filter).FirstOrDefaultAsync();
-        }
+            => await _collection.Find(u => u.Email == email).FirstOrDefaultAsync();
 
-        // Cria um novo usuário
         public async Task<ClientUserModel> RegisterUserAsync(ClientUserModel user, string email, string password)
         {
-            user.Email = email.ToLower().Trim();
-            if (user.Id == Guid.Empty)
-                user.Id = Guid.NewGuid();
-
+            user.Id = GetNextSequenceValue("client_user_id");
+            user.Email = email;
             user.Password = password;
-            user.Profile = UserProfile.Client;
-            user.IsActive = true;
-            user.CreatedAt = DateTime.UtcNow;
-
-            await _context.ClientUsers.InsertOneAsync(user);
+            await _collection.InsertOneAsync(user);
             return user;
         }
 
-        // Atualiza dados do usuário existente (Name, Email, Password, IsActive)
         public async Task<ClientUserModel> UpdateClientUserByIdAsync(ClientUserModel user, string email, string password)
         {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, user.Id);
-            var update = Builders<ClientUserModel>.Update
-                .Set(u => u.Name, user.Name.Trim())
-                .Set(u => u.Email, email.ToLower().Trim())
-                .Set(u => u.Password, password)
-                .Set(u => u.IsActive, user.IsActive);
-
-            await _context.ClientUsers.UpdateOneAsync(filter, update);
+            user.Email = email;
+            user.Password = password;
+            await _collection.ReplaceOneAsync(u => u.Id == user.Id, user);
             return user;
         }
 
-        // Exclui usuário pelo Id
-        public async Task<bool> DeleteClientUserByIdAsync(Guid id)
+        public async Task<ClientUserModel> DeleteClientUserByIdAsync(int id)
         {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, id);
-            var result = await _context.ClientUsers.DeleteOneAsync(filter);
-            return result.DeletedCount > 0;
+            var user = await GetUserByIdAsync(id);
+            if (user != null)
+                await _collection.DeleteOneAsync(u => u.Id == id);
+            return user!;
         }
 
-        // Verifica existência de usuário por email (retorna true/false)
         public async Task<bool> ClientUserExistsAsync(string email)
-        {
-            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Email, email.ToLower().Trim());
-            return await _context.ClientUsers.Find(filter).AnyAsync();
-        }
+            => await _collection.Find(u => u.Email == email).AnyAsync();
     }
 }

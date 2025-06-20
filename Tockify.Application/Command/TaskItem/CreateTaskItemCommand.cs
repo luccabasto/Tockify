@@ -1,7 +1,8 @@
-﻿namespace Tockify.Application.DTOs
+﻿namespace Tockify.Application.Command.TaskItem
 {
-    public class CreateToDoCommand
+    public class CreateTaskItemCommand
     {
+        public Guid TaskListId { get; set; }
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

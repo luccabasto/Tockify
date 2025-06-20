@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tockify.Application.Command.ClientUser;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ClientUser;
 
 namespace Tockify.WebAPI.Controllers
 {
-
     /// <summary>
     /// Controller para gerenciar usuários do cliente.
     /// </summary>
@@ -13,20 +13,25 @@ namespace Tockify.WebAPI.Controllers
     [Route("api/[controller]")]
     public class ClientUserController : ControllerBase
     {
-        private readonly ICreateClientUserUseCase _createUseCase;
-        private readonly IGetAllClientUsersUseCase _getAllUseCase;
-        private readonly IGetClientUserByIdUseCase _getByIdUseCase;
+        private readonly ICreateClientUserCase _createUseCase;
+        private readonly IGetAllClientUsersCase _getAllUseCase;
+        private readonly IGetClientUserByIdCase _getByIdUseCase;
+        private readonly IUpdateClientUseCase _updateUseCase;
+        private readonly IDeleteClientUserCase _deleteUseCase;
 
         public ClientUserController(
-            ICreateClientUserUseCase createUseCase,
-            IGetAllClientUsersUseCase getAllUseCase,
-            IGetClientUserByIdUseCase getByIdUseCase)
+            ICreateClientUserCase createUseCase,
+            IGetAllClientUsersCase getAllUseCase,
+            IGetClientUserByIdCase getByIdUseCase,
+            IUpdateClientUseCase updateUseCase,
+            IDeleteClientUserCase deleteUseCase)
         {
             _createUseCase = createUseCase;
             _getAllUseCase = getAllUseCase;
             _getByIdUseCase = getByIdUseCase;
+            _updateUseCase = updateUseCase;
+            _deleteUseCase = deleteUseCase;
         }
-
 
         /// <summary>
         /// Retorne todos os usuários do tipo Client.
@@ -80,7 +85,6 @@ namespace Tockify.WebAPI.Controllers
             }
         }
 
-
         /// <summary>
         /// Atualiza um usuário do tipo Client pelo ID.
         /// </summary>
@@ -94,7 +98,7 @@ namespace Tockify.WebAPI.Controllers
                 {
                     return BadRequest(new { message = "ID do usuário não corresponde ao ID do comando." });
                 }
-                var updatedDto = await _createUseCase.UpdateClientUser(command);
+                var updatedDto = await _updateUseCase.UpdateClientUser(command);
                 return Ok(updatedDto);
             }
             catch (Exception ex)
@@ -102,4 +106,19 @@ namespace Tockify.WebAPI.Controllers
                 return BadRequest(new { message = "Erro ao atualizar usuário do tipo Client.", error = ex.Message });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteClient(int id)
+        {
+            try
+            {
+                await _deleteUseCase.DeleteClientUser(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Erro ao excluir usuário do tipo Client.", error = ex.Message });
+            }
+        }
+    }
 }

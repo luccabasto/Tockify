@@ -2,8 +2,8 @@
 
 namespace Tockify.Application.Services.Interfaces.ClientUser
 {
-    public interface IGetAllClientUsersUseCase
+    public interface IGetClientUserByIdCase
     {
-        Task<IEnumerable<ClientUserDto>> GetAllClient();
+        Task<IEnumerable<ClientUserDto>> GetByIdAsync(int id);
     }
 }

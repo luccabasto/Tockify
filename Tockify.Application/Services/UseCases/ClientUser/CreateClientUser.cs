@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using System.Text.RegularExpressions;
+using Tockify.Application.Command.ClientUser;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ClientUser;
 using Tockify.Domain.Enums;
@@ -7,56 +9,45 @@ using Tockify.Domain.Repository.Interface;
 
 namespace Tockify.Application.Services.UseCases.ClientUser
 {
-    public class CreateClientUser : ICreateClientUserUseCase
+    public class CreateClientUserUseCase : ICreateClientUserCase
     {
-        private readonly IClientUserRepository _clientRepo;
+        private readonly IClientUserRepository _repository;
         private readonly IMapper _mapper;
+        private static readonly Regex EmailRegex =
+            new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-        public CreateClientUser
-        (
-                IClientUserRepository clientRepo,
-                IMapper mapper
-        )
+        public CreateClientUserUseCase(IClientUserRepository repository, IMapper mapper)
         {
-            _clientRepo = clientRepo;
+            _repository = repository;
             _mapper = mapper;
-
         }
 
-        public async Task<ClientUserDto> ExecuteAsync(CreateClientUserCommand command)
+        public async Task<ClientUserDto> CreateClientUser(CreateClientUserCommand command)
         {
-            // Validar dados mínimos
             if (string.IsNullOrWhiteSpace(command.Name))
-                throw new ArgumentException("Nome é obrigatório.", nameof(command.Name));
-            if (string.IsNullOrWhiteSpace(command.Email))
-                throw new ArgumentException("Email é obrigatório.", nameof(command.Email));
-            if (string.IsNullOrWhiteSpace(command.Password))
-                throw new ArgumentException("Password é obrigatório.", nameof(command.Password));
-
-            // Verificar se usuário já existe
-            var exists = await _clientRepo.ClientUserExistsAsync(command.Email); // Verificando se já existe usuário com o mesmo email
-            if (exists)
-                throw new InvalidOperationException($"Já existe usuário com email = {command.Email}");
-
-            // Criar a entidade de domínio
-            var entity = new ClientUserModel
+                throw new ArgumentException("Name is required.");
+            if (string.IsNullOrWhiteSpace(command.Email) || !EmailRegex.IsMatch(command.Email))
+                throw new ArgumentException("A valid email is required.");
+            if (string.IsNullOrWhiteSpace(command.Password) || command.Password.Length < 6)
+                throw new ArgumentException("Password must be at least 6 characters long.");
             {
-                Id = int.MinValue, // O ID será gerado pelo MongoDB
-                Name = command.Name.Trim(),
-                Email = command.Email.Trim().ToLower(),
-                Password = command.Password,
-                Gender = command.Gender,
-                Profile = UserProfile.Client,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
+                if (await _repository.ClientUserExistsAsync(command.Email))
+                    throw new InvalidOperationException("Email already in use.");
 
-            //  Persistir via repositório (Mongo)
-            var created = await _clientRepo.RegisterUserAsync(entity, entity.Email, entity.Password);
+                var model = new ClientUserModel(
+                    command.Name,
+                    command.Email,
+                    command.Password,
+                    command.Gender,
+                    command.Profile
+                );
 
-            //  Mapear para DTO de saída
-            var dto = _mapper.Map<ClientUserDto>(created);
-            return dto;
+                var created = await _repository.RegisterUserAsync(model, command.Email, command.Password);
+                return _mapper.Map<ClientUserDto>(created);
+            }
+
+            throw new ArgumentException("Invalid profile.");
         }
     }
 }
+
