@@ -6,7 +6,7 @@ namespace Tockify.Domain.Models
    public class CardModel
     {
         [BsonId]
-        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("cardId")]
         public string Id { get; set; }
 

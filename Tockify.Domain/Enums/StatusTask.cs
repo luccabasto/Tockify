@@ -1,19 +1,20 @@
-﻿
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Tockify.Domain.Enums
 {
     public enum StatusTask
     {
         [Description("A Fazer")]
-        ToDo = 1,
+        ToDo,
+
         [Description("Em Progresso")]
-        InProgress = 2,
+        InProgress,
+
         [Description("Concluído")]
-        Concluded = 3,
+        Concluded,
+
         [Description("Cancelado")]
-        Canceled = 4,
+        Canceled,
 
     }
 }

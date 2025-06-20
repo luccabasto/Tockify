@@ -1,43 +1,42 @@
-﻿using Tockify.Domain.Enums;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Tockify.Domain.Enums;
 
 namespace Tockify.Domain.Models
 {
-   public class ClientUserModel
+    public class ClientUserModel
     {
-
-        public ClientUserModel()
-        {
-
-        }
-        public Guid Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.Int32)]
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string? Gender { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        
-        public UserProfile Profile { get; set; } = UserProfile.Client;
-        public bool IsActive { get; set; } = true;
+        public string Gender { get; set; }
+        public UserProfile? Profile { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+ 
+        public ClientUserModel(){}
 
-        public List<CardModel>? Tasks { get; set; } = new List<CardModel>();
-
-        public ClientUserModel(string name, string email, string password, UserProfile userProfile)
+        // Construtor adicional para inicialização com parâmetros  
+        public ClientUserModel(string name, string email, string password, UserProfile profile)
         {
-            Id = Guid.NewGuid();
-            Name = name?.Trim() ?? throw new ArgumentNullException(nameof(name), "Nome não pode ser vazio.");
+            Name = name;
+            Email = email;
+            Password = password;
+            Profile = profile;
+        }
 
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException(nameof(email), "Email não pode ser vazio.");
-            Email = email.Trim().ToLower();
-
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentNullException(nameof(password), "Senha não pode ser vazia.");
-
-            if (password.Length < 6)
-                Password = password;
-
-            CreatedAt = DateTime.Now;
-            Profile = userProfile;
+        public ClientUserModel(string name, string email, string password, string gender, UserProfile profile)
+        {
+            Name = name;
+            Email = email;
+            Password = password;
+            Gender = gender;
+            Profile = profile;
+            IsActive = true;
+            CreatedAt = DateTime.UtcNow;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using Tockify.Application.Command.TaskItem;
 using Tockify.Application.DTOs;
-using Tockify.Application.Services.UseCases.Interfaces;
+using Tockify.Application.Services.Interfaces.TaskItem;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
 

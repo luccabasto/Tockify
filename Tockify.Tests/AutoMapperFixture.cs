@@ -15,7 +15,7 @@ namespace Tockify.Tests.Helpers
                 {
                     var config = new MapperConfiguration(cfg =>
                     {
-                        cfg.AddProfile<MappingProfile>();
+                        cfg.AddProfile<ClientUserProfile>();
                     });
                     _mapper = config.CreateMapper();
                 }

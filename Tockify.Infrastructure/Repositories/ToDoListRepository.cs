@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using Tockify.Domain.Models;
-using Tockify.Domain.Repository.Interface;
+/* using Tockify.Domain.Repository.Interface;
 using Tockify.Infrastructure.Data;
 
 namespace Tockify.Infrastructure.Repositories
@@ -60,3 +60,4 @@ namespace Tockify.Infrastructure.Repositories
         }
     }
 }
+*/
