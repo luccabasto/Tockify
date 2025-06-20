@@ -10,7 +10,7 @@ namespace Tockify.Infrastructure.Context
         public MongoContext(IConfiguration configuration)
         {
             var client = new MongoClient(configuration.GetConnectionString("MongoDb"));
-            Database = client.GetDatabase(configuration["MongoDbSettings:DatabaseName"]);
+            Database = client.GetDatabase(configuration["MongoDatabase"]);
         }
     }
 }

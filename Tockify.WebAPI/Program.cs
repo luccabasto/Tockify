@@ -7,7 +7,6 @@ using Tockify.Application.Services.Interfaces.ToDo;
 using Tockify.Application.Services.UseCases.ClientUser;
 using Tockify.Application.Services.UseCases.Implementations;
 using Tockify.Application.Services.UseCases.TaskItem;
-/*using Tockify.Application.Services.UseCases.ToDo;*/
 using Tockify.Domain.Repository.Interface;
 using Tockify.Infrastructure.Context;
 using Tockify.Infrastructure.Repositories;
@@ -17,8 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 // --- Persistência / MongoContext e Repositórios ---
 builder.Services.AddSingleton<MongoContext>();
 builder.Services.AddScoped<IClientUserRepository, ClientUserRepository>();
-/*builder.Services.AddScoped<IToDoListRepository, ToDoListRepository>();*/
-/*builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();*/
 
 // --- AutoMapper ---
 builder.Services.AddAutoMapper(typeof(ClientUserProfile));
@@ -31,10 +28,7 @@ builder.Services.AddScoped<IUpdateClientUseCase, UpdateClientUserUseCase>();
 builder.Services.AddScoped<IDeleteClientUserCase, DeleteClientUserUseCase>();
 
 // --- Casos de Uso ToDo e TaskItem (separados) ---
-/*builder.Services.AddScoped<ICreateToDoListUseCase, CreateToDoListUseCase>();*/
-builder.Services.AddScoped<IGetToDoByUserUseCase, GetToDoListsByUserUseCase>();
-builder.Services.AddScoped<ICreateTaskItemUseCase, CreateTaskItemUseCase>();
-builder.Services.AddScoped<IGetTaskItemsByTaskListUseCase, GetTaskItemsByTaskListUseCase>();
+
 
 // --- MVC / Swagger ---
 builder.Services.AddControllers();
