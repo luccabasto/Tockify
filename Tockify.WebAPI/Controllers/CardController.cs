@@ -33,7 +33,7 @@ namespace Tockify.WebAPI.Controllers
             try
             {
                 await _createUseCase.ExecuteAsync(command);
-                return CreatedAtAction(nameof(GetByUserId), new { userId = command.UserId }, command);
+                return CreatedAtAction(nameof(GetByUserId), new { userId = command.CreatedByUserId }, command);
             }
             catch (Exception ex)
             {

@@ -1,9 +1,10 @@
-﻿using Tockify.Application.DTOs;
+﻿using MongoDB.Bson;
+using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.Interfaces.ToDo
 {
     public interface IGetToDoByUserUseCase
     {
-        Task<IEnumerable<ToDoDto>> ExecuteAsync(Guid userId);
+        Task<IEnumerable<ToDoDto>> ExecuteAsync(int userId);
     }
 }

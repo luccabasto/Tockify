@@ -18,12 +18,12 @@ namespace Tockify.Application.Services.UseCases.Implementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ToDoDto>> ExecuteAsync(Guid userId)
+        public async Task<IEnumerable<ToDoDto>> ExecuteAsync(int userId)
         {
-            if (userId == Guid.Empty)
+            if (userId == null)
                 throw new ArgumentException("UserId não pode ser vazio.", nameof(userId));
 
-            var entities = await _taskListRepo.GetTasksByUserIdAsync(userId);
+            var entities = await _taskListRepo.GetByUserAsync(userId);
             var dtos = entities.Select(e => _mapper.Map<ToDoDto>(e));
             return dtos;
         }
