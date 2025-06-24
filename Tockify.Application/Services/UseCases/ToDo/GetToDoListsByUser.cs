@@ -5,27 +5,23 @@ using Tockify.Domain.Repository.Interface;
 
 namespace Tockify.Application.Services.UseCases.Implementations
 {
-    public class GetToDoListsByUserUseCase : IGetToDoByUserUseCase
+    public class GetUserToDosCase : IGetUserToDosCase
     {
-        private readonly IToDoListRepository _taskListRepo;
+        private readonly IToDoListRepository _toDoRepo;
         private readonly IMapper _mapper;
 
-        public GetToDoListsByUserUseCase(
+        public GetUserToDosCase(
             IToDoListRepository taskListRepo,
             IMapper mapper)
         {
-            _taskListRepo = taskListRepo;
+            _toDoRepo = taskListRepo;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ToDoDto>> ExecuteAsync(int userId)
+        public async Task<List<ToDoDto>> ExecuteAsync(int userId)
         {
-            if (userId == null)
-                throw new ArgumentException("UserId não pode ser vazio.", nameof(userId));
-
-            var entities = await _taskListRepo.GetByUserAsync(userId);
-            var dtos = entities.Select(e => _mapper.Map<ToDoDto>(e));
-            return dtos;
+            var all = await _toDoRepo.GetByUserAsync(userId);
+            return all.Select(x => _mapper.Map<ToDoDto>(x)).ToList();
         }
     }
 }

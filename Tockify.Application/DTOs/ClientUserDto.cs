@@ -11,6 +11,8 @@ namespace Tockify.Application.DTOs
         public UserProfile? Profile { get; set; }
         public bool? IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int IncompleteToDosCount { get; set; }
+        public List<ToDoSummaryDto> ToDos { get; set; } = new();
 
     }
 }

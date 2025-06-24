@@ -12,5 +12,7 @@ namespace Tockify.Domain.Repository.Interface
         Task<ClientUserModel> UpdateClientUserByIdAsync(ClientUserModel user, string email, string password);
         Task<ClientUserModel> DeleteClientUserByIdAsync(int id);
         Task<bool> ClientUserExistsAsync(string email);
+        Task? IncrementIncompleteCountAsync(int userId);
+        Task? DecrementIncompleteCountAsync(int userId);
     }
 }

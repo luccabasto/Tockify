@@ -1,9 +1,10 @@
 ﻿using Tockify.Application.DTOs;
+using Tockify.Domain.Enums;
 
 namespace Tockify.Application.Services.Interfaces.ClientUser
 {
     public interface IGetAllClientUsersCase
     {
-        Task<IEnumerable<ClientUserDto>> GetAllClient();
+        Task<List<ClientUserDto>> GetAllClient(UserProfile? profile = null);
     }
 }

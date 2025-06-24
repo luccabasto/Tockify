@@ -8,9 +8,6 @@ namespace Tockify.Application.Command.ToDo
         [Required]
         public string id { get; set; } = null;
 
-        /// <summary>
-        /// Se for null, não será atualizado.
-        /// </summary>
         public string? Title { get; set; }
         public string? Description { get; set; }
         public List<string>? Flags { get; set; }

@@ -33,11 +33,9 @@ namespace Tockify.Domain.Models
         public DateTime? DueDate { get; set; }
 
         [BsonElement("createdByUserId")]
-        [BsonRepresentation(BsonType.Int32)]
         public int CreatedByUserId { get; set; }
 
         [BsonElement("taskItemId")]
-        [BsonRepresentation(BsonType.ObjectId)]
         public int? TaskItemId { get; set; }
     }
 }
