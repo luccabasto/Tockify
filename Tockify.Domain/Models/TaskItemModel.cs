@@ -10,7 +10,7 @@ namespace Tockify.Domain.Models
         public string? Description { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? DueDate { get; set; }
-        public StatusTask? Status { get; set; }
+        public TaskItemStatus? Status { get; set; }
         public bool? IsCompleted { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string? ToDoListId { get; set; }
