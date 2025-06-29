@@ -2,7 +2,7 @@
 
 namespace Tockify.Domain.Enums
 {
-    public enum StatusTask
+    public enum TaskItemStatus
     {
         [Description("A Fazer")]
         ToDo,
@@ -10,8 +10,11 @@ namespace Tockify.Domain.Enums
         [Description("Em Progresso")]
         InProgress,
 
-        [Description("Concluído")]
-        Concluded,
+        [Description("Concluída")]
+        Completed,
+
+        [Description("Pendente")]
+        Pending,
 
         [Description("Cancelado")]
         Canceled,
