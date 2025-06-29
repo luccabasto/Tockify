@@ -33,7 +33,7 @@ namespace Tockify.Application.Services.UseCases.TaskItem
             {
                 Id = Guid.NewGuid().ToString(),
                 ToDoListId = command.TaskListId.ToString(),
-                Name = command.Name.Trim(),
+                Title = command.Name.Trim(),
                 Description = command.Description.Trim(),
                 CreatedAt = DateTime.UtcNow,
                 DueDate = command.DueDate,

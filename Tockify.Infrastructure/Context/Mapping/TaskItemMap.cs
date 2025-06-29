@@ -11,7 +11,7 @@ namespace Tockify.Infrastructure.Data.Mapping
             builder.ToTable("TaskItems");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.Property(x => x.Name)
+            builder.Property(x => x.Title)
                 .IsRequired()
                 .HasMaxLength(200);
             builder.Property(x => x.Description)
