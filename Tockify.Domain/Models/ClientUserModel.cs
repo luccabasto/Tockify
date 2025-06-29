@@ -16,10 +16,12 @@ namespace Tockify.Domain.Models
         public UserProfile? Profile { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
- 
+
+        [BsonElement("incompleteToDosCount")]
+        public int IncompleteToDosCount { get; set; }
+
         public ClientUserModel(){}
 
-        // Construtor adicional para inicialização com parâmetros  
         public ClientUserModel(string name, string email, string password, UserProfile profile)
         {
             Name = name;
@@ -28,7 +30,7 @@ namespace Tockify.Domain.Models
             Profile = profile;
         }
 
-        public ClientUserModel(string name, string email, string password, string gender, UserProfile profile)
+        public ClientUserModel(string name, string email, string password, string gender, UserProfile profile, int incompleteToDosCount)
         {
             Name = name;
             Email = email;
@@ -37,6 +39,7 @@ namespace Tockify.Domain.Models
             Profile = profile;
             IsActive = true;
             CreatedAt = DateTime.UtcNow;
+            IncompleteToDosCount = incompleteToDosCount;
         }
     }
 }

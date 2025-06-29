@@ -2,8 +2,8 @@
 
 namespace Tockify.Application.Services.Interfaces.ToDo
 {
-    public interface IGetToDoByUserUseCase
+    public interface IGetUserToDosCase
     {
-        Task<IEnumerable<ToDoDto>> ExecuteAsync(Guid userId);
+        Task<List<ToDoDto>> ExecuteAsync(int userId);
     }
 }

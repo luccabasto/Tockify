@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.Command.TaskItem;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.TaskItem;
@@ -11,11 +11,11 @@ namespace Tockify.WebAPI.Controllers
     public class TaskItemController : ControllerBase
     {
         private readonly ICreateTaskItemUseCase _createUseCase;
-        private readonly IGetTaskItemsByTaskListUseCase _getByTaskUseCase;
+        private readonly IGetUserToDosCase _getByTaskUseCase;
 
         public TaskItemController(
             ICreateTaskItemUseCase createUseCase,
-            IGetTaskItemsByTaskListUseCase getByTaskUseCase)
+            IGetUserToDosCase getByTaskUseCase)
         {
             _createUseCase = createUseCase;
             _getByTaskUseCase = getByTaskUseCase;
@@ -43,3 +43,4 @@ namespace Tockify.WebAPI.Controllers
         }
     }
 }
+*/

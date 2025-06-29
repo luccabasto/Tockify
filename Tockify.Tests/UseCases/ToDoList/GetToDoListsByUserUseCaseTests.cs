@@ -32,7 +32,7 @@ namespace Tockify.Tests.UseCases.TaskList
             var userIdGuid = Guid.NewGuid();
 
             // 2) Cria lista fake de TaskListModel
-            var fakeEntities = new List<CardModel>
+            var fakeEntities = new List<ToDoModel>
             {
                 // Construtor de TaskListModel: (string userId, string name, string description, DateTime dueDate)
                 new CardModel(
@@ -52,11 +52,11 @@ namespace Tockify.Tests.UseCases.TaskList
             // 3) Configura o Mock<IToDoListRepository> (ou ITaskListRepository)
             var mockRepo = new Mock<IToDoListRepository>();
             mockRepo
-                .Setup(r => r.GetTasksByUserIdAsync(userIdGuid))
+                .Setup(r => r.GetToDoByUserIdAsync(userIdGuid))
                 .ReturnsAsync(fakeEntities);
 
             // 4) Instancia o Use Case, injetando o mock e o mapper
-            var useCase = new GetToDoListsByUserUseCase(mockRepo.Object, _mapper);
+            var useCase = new GetUserToDosCase(mockRepo.Object, _mapper);
 
             // Act
             var result = await useCase.ExecuteAsync(userIdGuid);
@@ -65,7 +65,7 @@ namespace Tockify.Tests.UseCases.TaskList
             result.Should().HaveCount(2);
             result.First().Name.Should().Be("Lista 1");
             result.Last().Name.Should().Be("Lista 2");
-            mockRepo.Verify(r => r.GetTasksByUserIdAsync(userIdGuid), Times.Once);
+            mockRepo.Verify(r => r.GetToDoByUserIdAsync(userIdGuid), Times.Once);
         }
 
         [Fact(DisplayName = "Quando userId inválido, GetTaskListsByUserUseCase lança ArgumentException")]
@@ -73,13 +73,13 @@ namespace Tockify.Tests.UseCases.TaskList
         {
             // Arrange
             var mockRepo = new Mock<IToDoListRepository>();
-            var useCase = new GetToDoListsByUserUseCase(mockRepo.Object, _mapper);
+            var useCase = new GetUserToDosCase(mockRepo.Object, _mapper);
 
             // Act / Assert: se Guid.Empty for passado, esperamos ArgumentException
             await Assert.ThrowsAsync<ArgumentException>(() => useCase.ExecuteAsync(Guid.Empty));
 
             // Verifica que o repositório não foi sequer invocado
-            mockRepo.Verify(r => r.GetTasksByUserIdAsync(It.IsAny<Guid>()), Times.Never);
+            mockRepo.Verify(r => r.GetToDoByUserIdAsync(It.IsAny<Guid>()), Times.Never);
         }
     }
 }

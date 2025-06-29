@@ -53,13 +53,12 @@ namespace Tockify.WebAPI.Controllers
         {
             try
             {
-                var dtos = await _getByIdUseCase.GetByIdAsync(id);
-                var dto = dtos?.FirstOrDefault();
-                if (dto == null)
+                var dtos = await _getByIdUseCase.GetUserByIdAsync(id);
+                if (dtos == null)
                 {
                     return NotFound(new { message = $"Usuário com ID {id} não encontrado." });
                 }
-                return Ok(new { message = "Usuário encontrado com sucesso.", data = dto });
+                return Ok(new { message = "Usuário encontrado com sucesso.", data = dtos });
             }
             catch (Exception ex)
             {

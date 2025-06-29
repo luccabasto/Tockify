@@ -3,9 +3,9 @@ using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.Interfaces.ToDo
 {
-    public interface ICreateToDotUseCase
+    public interface ICreateToDoCase
     {
-        Task<ToDoDto> ExecuteAsync(CreateToDoCommand command);
+        Task<ToDoDto> CreateToDoAsync(CreateToDoCommand command);
 
     }
 }

@@ -73,5 +73,19 @@ namespace Tockify.Infrastructure.Repositories
 
         public async Task<bool> ClientUserExistsAsync(string email)
             => await _collection.Find(u => u.Email == email).AnyAsync();
+
+        public async Task IncrementIncompleteCountAsync(int userId)
+        {
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<ClientUserModel>.Update.Inc(u => u.IncompleteToDosCount, 1);
+            await _collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task DecrementIncompleteCountAsync(int userId)
+        {
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<ClientUserModel>.Update.Inc(u => u.IncompleteToDosCount, -1);
+            await _collection.UpdateOneAsync(filter, update);
+        }
     }
 }

@@ -39,7 +39,8 @@ namespace Tockify.Application.Services.UseCases.ClientUser
                     command.Email,
                     command.Password,
                     command.Gender,
-                    command.Profile
+                    command.Profile,
+                    command.IncompleteToDosCount
                 );
 
                 var created = await _repository.RegisterUserAsync(model, command.Email, command.Password);

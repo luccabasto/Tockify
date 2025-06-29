@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Tockify.Application.DTOs;
+/*using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ToDo;
 using Tockify.Domain.Repository.Interface;
 
 namespace Tockify.Application.Services.UseCases.TaskItem
 {
-    public class GetTaskItemsByTaskListUseCase : IGetTaskItemsByTaskListUseCase
+    public class GetTaskItemsByTaskListUseCase : IGetUserToDosCase
     {
         private readonly ITaskItemRepository _itemRepo;
         private readonly IMapper _mapper;
@@ -28,9 +28,10 @@ namespace Tockify.Application.Services.UseCases.TaskItem
             return dtos;
         }
 
-        Task<IEnumerable<ToDoDto>> IGetTaskItemsByTaskListUseCase.ExecuteAsync(Guid userId)
+        Task<IEnumerable<ToDoDto>> IGetUserToDosCase.ExecuteAsync(int userId)
         {
             throw new NotImplementedException();
         }
     }
 }
+*/

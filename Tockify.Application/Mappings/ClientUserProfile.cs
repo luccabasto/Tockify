@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
-using Tockify.Application.Command.ClientUser;
-using Tockify.Application.Command.TaskItem;
-using Tockify.Application.Command.ToDo;
 using Tockify.Application.DTOs;
-using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
 
 namespace Tockify.Application.Mappings
@@ -12,13 +8,10 @@ namespace Tockify.Application.Mappings
     {
         public ClientUserProfile()
         {
-            CreateMap<CreateClientUserCommand, ClientUserModel>()
-                .ForMember(dest => dest.Profile,
-                    opt => opt.MapFrom(src => src.Profile));
-
             CreateMap<ClientUserModel, ClientUserDto>()
-                .ForMember(dest => dest.Profile,
-                    opt => opt.MapFrom(src => src.Profile.ToString()));
+                .ForMember(dest => dest.IncompleteToDosCount,
+                           opt => opt.MapFrom(src => src.IncompleteToDosCount))
+                .ForMember(dest => dest.ToDos, opt => opt.Ignore());
         }
     }
 }

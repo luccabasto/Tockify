@@ -9,5 +9,6 @@ namespace Tockify.Application.Command.ClientUser
         public string Password { get; set; }
         public string? Gender { get; set; }
         public UserProfile Profile { get; set; } = UserProfile.Client;
+        public int IncompleteToDosCount { get; set; }
     }
 }
