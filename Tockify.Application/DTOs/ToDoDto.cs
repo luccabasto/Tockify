@@ -14,5 +14,10 @@ namespace Tockify.Application.DTOs
         public DateTime? DueDate { get; set; }
         public int CreatedByUserId { get; set; }
         public int? TaskItemId { get; set; }
+
+        public int TotalTasksCount { get; set; }
+        public int PendingTasksCount { get; set; }
+        public int CompletedTasksCount { get; set; }
+        public List<TaskItemSummaryDto> CompletedTasks { get; set; } = new();
     }
 }
