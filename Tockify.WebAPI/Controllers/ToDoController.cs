@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.Command.ToDo;
 using Tockify.Application.DTOs;
+using Tockify.Application.Services.Interfaces.TaskItem;
 using Tockify.Application.Services.Interfaces.ToDo;
 
 namespace Tockify.WebAPI.Controllers
@@ -13,17 +14,20 @@ namespace Tockify.WebAPI.Controllers
         private readonly IGetUserToDosCase _getCase;
         private readonly IUpdateToDoCase _updateCase;
         private readonly IDeleteToDoCase _deleteCase;
+        private readonly IGetTaskItemByIdCase _getTaskCase;
 
         public ToDoController(
             ICreateToDoCase createCase,
             IGetUserToDosCase getCase,
             IUpdateToDoCase updateCase,
-            IDeleteToDoCase deleteCase)
+            IDeleteToDoCase deleteCase,
+            IGetTaskItemByIdCase taskItemCase)
         {
             _createCase = createCase;
             _getCase = getCase;
             _updateCase = updateCase;
             _deleteCase = deleteCase;
+            _getTaskCase = taskItemCase;
         }
         /// <summary>
         /// Cria um novo ToDo.
@@ -58,6 +62,8 @@ namespace Tockify.WebAPI.Controllers
             var todos = await _getCase.ExecuteAsync(userId);
             var item = todos.Find(t => t.Id == id);
             if (item == null) return NotFound();
+
+            var tasks = await _getTaskCase.GetTaskItemByIdAsync(id, userId);
             return Ok(item);
         }
 

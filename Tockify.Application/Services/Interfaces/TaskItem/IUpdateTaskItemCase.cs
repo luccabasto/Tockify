@@ -3,8 +3,8 @@ using Tockify.Application.DTOs;
 
 namespace Tockify.Application.Services.Interfaces.TaskItem
 {
-    public interface ICreateTaskItemUseCase
+    public interface IUpdateTaskItemCase
     {
-        Task<TaskItemDto> ExecuteAsync(CreateTaskItemCommand command);
+        Task<TaskItemDto> UpdateTaskAsync(UpdateTaskItemCommand command);
     }
 }

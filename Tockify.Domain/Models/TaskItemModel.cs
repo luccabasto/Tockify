@@ -8,13 +8,13 @@ namespace Tockify.Domain.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; } = null!;
 
         [BsonElement("title")]
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; } = null!;
 
         [BsonElement("description")]
-        public string? Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = null!;
 
         [BsonElement("createdAt")]
         public DateTime? CreatedAt { get; set; }
@@ -32,9 +32,12 @@ namespace Tockify.Domain.Models
         [BsonElement("updateAt")]
         public DateTime? UpdatedAt { get; set; }
 
+        [BsonElement("completedAt")]
+        public DateTime? CompletedAt { get; set; }
+
         [BsonElement("tDoId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string ToDoListId { get; set; } = null;
+        public string ToDoId { get; set; } = null!;
 
         [BsonElement("createdByUserId")]
         [BsonRepresentation(BsonType.Int32)]

@@ -2,48 +2,49 @@
 using Tockify.Application.Command.TaskItem;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.TaskItem;
+using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
 
 namespace Tockify.Application.Services.UseCases.TaskItem
 {
-    public class CreateTaskItemUseCase : ICreateTaskItemUseCase
+    public class CreateTaskItemUseCase : ICreateTaskItemCase
     {
-        private readonly ITaskItemRepository _itemRepo;
+        private readonly ITaskItemRepository _taskItemRepository;
+        private readonly IToDoListRepository _toDoListRepository;
         private readonly IMapper _mapper;
 
         public CreateTaskItemUseCase(
-            ITaskItemRepository itemRepo,
+            ITaskItemRepository taskRepo,
+            IToDoListRepository todoRepo,
             IMapper mapper)
         {
-            _itemRepo = itemRepo;
+            _taskItemRepository = taskRepo;
+            _toDoListRepository = todoRepo;
             _mapper = mapper;
         }
 
-        public async Task<TaskItemDto> ExecuteAsync(CreateTaskItemCommand command)
+       public async Task<TaskItemDto> CreateTaskItemAsync(CreateTaskItemCommand command)
         {
 
-            if (command.TaskListId == Guid.Empty)
-                throw new ArgumentException("ToDoListId não pode ser vazio.", nameof(command.TaskListId));
-            if (string.IsNullOrWhiteSpace(command.Name))
-                throw new ArgumentException("Name da TaskItem é obrigatório.", nameof(command.Name));
+            if(string.IsNullOrWhiteSpace(command.Title))
+                throw new ArgumentException("Título é obrigatório", nameof(command.Title));
+            if (string.IsNullOrWhiteSpace(command.Description))
+                throw new ArgumentException("Descrição é obrigatória", nameof(command.Description));
+            if (command.DueDate < DateTime.UtcNow)
+                throw new ArgumentException("A data de vencimento não pode ser no passado", nameof(command.DueDate));
 
-            // Cria entidade
-            var entity = new TaskItemModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                ToDoListId = command.TaskListId.ToString(),
-                Title = command.Name.Trim(),
-                Description = command.Description.Trim(),
-                CreatedAt = DateTime.UtcNow,
-                DueDate = command.DueDate,
-                IsCompleted = false
-            };
+            var todo = await _toDoListRepository.GetByIdAsync(command.ToDoId) ?? throw new KeyNotFoundException("ToDo não encontrado.");
 
-            await _itemRepo.AddItemAsync(entity);
+            if (todo.CreatedByUserId != command.CreatedByUserId) throw new UnauthorizedAccessException("Acesso negado: ToDo não pertence ao usuário.");
 
-            var dto = _mapper.Map<TaskItemDto>(entity);
-            return dto;
+            var model = _mapper.Map<TaskItemModel>(command);
+            model.CreatedAt = DateTime.UtcNow;
+            model.Status = TaskItemStatus.Pending;
+            model.CompletedAt = null;
+
+            var createdTask = await _taskItemRepository.CreateTaskItemAsync(model);
+            return _mapper.Map<TaskItemDto>(createdTask);
         }
     }
 }

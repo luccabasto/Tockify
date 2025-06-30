@@ -1,8 +1,7 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.Command.TaskItem;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.TaskItem;
-using Tockify.Application.Services.Interfaces.ToDo;
 
 namespace Tockify.WebAPI.Controllers
 {
@@ -10,37 +9,84 @@ namespace Tockify.WebAPI.Controllers
     [Route("api/[controller]")]
     public class TaskItemController : ControllerBase
     {
-        private readonly ICreateTaskItemUseCase _createUseCase;
-        private readonly IGetUserToDosCase _getByTaskUseCase;
+        private readonly ICreateTaskItemCase _createCase;
+        private readonly IGetToDoTasksCase _getCase;
+        private readonly IUpdateTaskItemCase _updateCase;
+        private readonly IDeleteTaskItemCase _deleteCase;
 
         public TaskItemController(
-            ICreateTaskItemUseCase createUseCase,
-            IGetUserToDosCase getByTaskUseCase)
+            ICreateTaskItemCase createCase,
+            IGetToDoTasksCase getCase,
+            IUpdateTaskItemCase updateCase,
+            IDeleteTaskItemCase deleteCase)
         {
-            _createUseCase = createUseCase;
-            _getByTaskUseCase = getByTaskUseCase;
+            _createCase = createCase;
+            _getCase = getCase;
+            _updateCase = updateCase;
+            _deleteCase = deleteCase;
         }
 
-        [HttpGet("task/{taskListId:guid}")]
-        public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetByTaskId(Guid taskListId)
-        {
-            var dtos = await _getByTaskUseCase.ExecuteAsync(taskListId);
-            return Ok(dtos);
-        }
-
+        /// <summary>
+        /// Criar um novo item de tarefa.
+        /// </summary>
+        /// <returns>O item de tarefa criado.</returns>
         [HttpPost]
-        public async Task<ActionResult<TaskItemDto>> Create([FromBody] CreateTaskItemCommand command)
+        public async Task<ActionResult<TaskItemDto>> Post([FromBody] CreateTaskItemCommand cmd)
         {
-            try
-            {
-                var createdDto = await _createUseCase.ExecuteAsync(command);
-                return CreatedAtAction(nameof(GetByTaskId), new { taskListId = createdDto.TaskListId }, createdDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var dto = await _createCase.CreateTaskItemAsync(cmd);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Id, userId = dto.CreatedByUserId }, dto);
+        }
+
+        /// <summary>
+        ///  Pegar todos os itens de tarefa de um ToDo específico.
+        ///  </summary>
+        ///  <returns>Uma lista de itens de tarefa.</returns>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TaskItemDto>>> Get([FromQuery] string toDoId, [FromQuery] int userId)
+        {
+            var list = await _getCase.GetToDoTasksAsync(toDoId, userId);
+            return Ok(list);
+        }
+
+        /// <summary>
+        /// Retorna um item de tarefa específico pelo ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TaskItemDto>> GetById(string id, [FromQuery] int userId)
+        {
+            var items = await _getCase.GetToDoTasksAsync("", userId); // Corrigido para usar GetToDoTasksAsync
+            var item = items.Find(t => t.Id == id);
+            if (item == null) return NotFound();
+            return Ok(item);
+        }
+
+        /// <summary>
+        /// Atualiza um item de tarefa existente.
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns>O item de tarefa atualizado.</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TaskItemDto>> Put(string id, [FromBody] UpdateTaskItemCommand cmd)
+        {
+            cmd.Id = id;
+            var dto = await _updateCase.UpdateTaskAsync(cmd);
+            return Ok(dto);
+        }
+
+        /// <summary>
+        /// Deleta um item de tarefa existente.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id, [FromQuery] int userId)
+        {
+            var ok = await _deleteCase.DeleteTaskItemAsync(id, userId);
+            return ok ? NoContent() : NotFound();
         }
     }
 }
-*/

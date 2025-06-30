@@ -1,5 +1,6 @@
 ﻿using Tockify.Domain.Models;
 
+
 namespace Tockify.Domain.Repository.Interface
 {
     public interface ITaskItemRepository
