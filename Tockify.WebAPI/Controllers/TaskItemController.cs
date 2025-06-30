@@ -72,7 +72,7 @@ namespace Tockify.WebAPI.Controllers
         public async Task<ActionResult<TaskItemDto>> Put(string id, [FromBody] UpdateTaskItemCommand cmd)
         {
             cmd.Id = id;
-            var dto = await _updateCase.UpdateTaskAsync(cmd);
+            var dto = await _updateCase.UpdateTaskItemAsync(cmd);
             return Ok(dto);
         }
 
