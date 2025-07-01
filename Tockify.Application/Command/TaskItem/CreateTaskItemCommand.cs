@@ -1,11 +1,26 @@
-﻿namespace Tockify.Application.Command.TaskItem
+﻿using System.ComponentModel.DataAnnotations;
+
+
+namespace Tockify.Application.Command.TaskItem
 {
     public class CreateTaskItemCommand
     {
-        public Guid TaskListId { get; set; }
-        public Guid UserId { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        [Required, MinLength(1)]
+        public string Title { get; set; } = null!;
+
+        [Required, MinLength(1)]
+        public string Description { get; set; } = null!;
+
+        [Required]
         public DateTime DueDate { get; set; }
+
+        [Required]
+        public string ToDoId { get; set; } = null!;
+
+        [Required]
+        public int CreatedByUserId { get; set; }
+        
+        
+       
     }
 }

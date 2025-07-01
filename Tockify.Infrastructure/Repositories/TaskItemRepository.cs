@@ -1,64 +1,54 @@
-﻿/* using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
-using Tockify.Infrastructure.Data;
 
 namespace Tockify.Infrastructure.Repositories
 {
     public class TaskItemRepository : ITaskItemRepository
     {
-        private readonly MongoContext _context;
+        private readonly IMongoCollection<TaskItemModel> _taskCollection;
 
-        public TaskItemRepository(MongoContext mongoContext)
+        public TaskItemRepository(IMongoDatabase database)
         {
-            _context = mongoContext;
+            _taskCollection = database.GetCollection<TaskItemModel>("TaskItems");
         }
 
-        // Retorna todas as sub‐tarefas (TaskItems) associadas a uma TaskList (taskListId)
-        public async Task<List<TaskItemModel>> GetItemsByTaskIdAsync(Guid taskListId)
+        public async Task<TaskItemModel> CreateTaskItemAsync(TaskItemModel task)
         {
-            var filter = Builders<TaskItemModel>.Filter.Eq(x => x.ToDoListId, taskListId.ToString());
-            return await _context.TaskItems.Find(filter).ToListAsync();
+            await _taskCollection.InsertOneAsync(task);
+            return task;
         }
 
-        // Retorna uma sub‐tarefa pelo seu Id
-        public async Task<TaskItemModel?> GetItemByIdAsync(Guid id)
+        public async Task<List<TaskItemModel>> GetByToDoAsync(string toDoId)
         {
-            var filter = Builders<TaskItemModel>.Filter.Eq(x => x.Id, id.ToString());
-            return await _context.TaskItems.Find(filter).FirstOrDefaultAsync();
+            var filter = Builders<TaskItemModel>.Filter.Eq(t => t.ToDoId, toDoId);
+            return await _taskCollection.Find(filter).ToListAsync();
         }
 
-        // Insere uma nova sub‐tarefa (TaskItem)
-        public async Task<TaskItemModel> AddItemAsync(TaskItemModel item)
+        public async Task<TaskItemModel?> GetTaskByIdAsync(string id)
         {
-            if (string.IsNullOrWhiteSpace(item.Id))
-                item.Id = Guid.NewGuid().ToString();
-
-            if (item.CreatedAt == default)
-                item.CreatedAt = DateTime.UtcNow;
-
-            item.IsCompleted = false;
-
-            await _context.TaskItems.InsertOneAsync(item);
-            return item;
+            var filter = Builders<TaskItemModel>.Filter.Eq(t => t.Id, id);
+            return await _taskCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        // Atualiza uma sub‐tarefa existente
-        public async Task<TaskItemModel> UpdateItemAsync(TaskItemModel item)
+        public async Task<TaskItemModel?> UpdateTaskAsync(TaskItemModel task)
         {
-            var filter = Builders<TaskItemModel>.Filter.Eq(x => x.Id, item.Id);
-            await _context.TaskItems.ReplaceOneAsync(filter, item);
-            return item;
+            var filter = Builders<TaskItemModel>.Filter.Eq(t => t.Id, task.Id);
+            var update = Builders<TaskItemModel>.Update
+                .Set(t => t.Title, task.Title)
+                .Set(t => t.Description, task.Description)
+                .Set(t => t.DueDate, task.DueDate)
+                .Set(t => t.Status, task.Status)
+                .Set(t => t.CompletedAt, task.CompletedAt);
+            var result = await _taskCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0 ? task : null;
         }
 
-        // Exclui uma sub‐tarefa pelo Id
-        public async Task<bool> DeleteItemAsync(Guid id)
+        public async Task<bool> DeleteTaskAsync(string id)
         {
-            var filter = Builders<TaskItemModel>.Filter.Eq(x => x.Id, id.ToString());
-            var result = await _context.TaskItems.DeleteOneAsync(filter);
-            return result.DeletedCount > 0;
+            var filter = Builders<TaskItemModel>.Filter.Eq(t => t.Id, id);
+            var result = await _taskCollection.DeleteOneAsync(filter);
+            return result.IsAcknowledged && result.DeletedCount > 0;
         }
     }
 }
-
-*/

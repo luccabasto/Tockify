@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tockify.Application.Command.ToDo;
 using Tockify.Application.DTOs;
+using Tockify.Application.Services.Interfaces.TaskItem;
 using Tockify.Application.Services.Interfaces.ToDo;
+using Tockify.Domain.Enums;
 
 namespace Tockify.WebAPI.Controllers
 {
@@ -13,17 +15,23 @@ namespace Tockify.WebAPI.Controllers
         private readonly IGetUserToDosCase _getCase;
         private readonly IUpdateToDoCase _updateCase;
         private readonly IDeleteToDoCase _deleteCase;
+        private readonly IGetTaskItemByIdCase _getTaskCase;
+        private readonly IGetToDoTasksCase _getTasks;
 
         public ToDoController(
             ICreateToDoCase createCase,
             IGetUserToDosCase getCase,
             IUpdateToDoCase updateCase,
-            IDeleteToDoCase deleteCase)
+            IDeleteToDoCase deleteCase,
+            IGetTaskItemByIdCase taskItemCase,
+            IGetToDoTasksCase getToDoTasksCase)
         {
             _createCase = createCase;
             _getCase = getCase;
             _updateCase = updateCase;
             _deleteCase = deleteCase;
+            _getTaskCase = taskItemCase;
+            _getTasks = getToDoTasksCase;
         }
         /// <summary>
         /// Cria um novo ToDo.
@@ -57,7 +65,26 @@ namespace Tockify.WebAPI.Controllers
         {
             var todos = await _getCase.ExecuteAsync(userId);
             var item = todos.Find(t => t.Id == id);
-            if (item == null) return NotFound();
+            if (item == null)
+                return NotFound();
+
+            List<TaskItemDto> tasks = await _getTasks.GetToDoTasksAsync(id, userId);
+
+            item.TotalTasksCount = tasks.Count;
+            item.PendingTasksCount = tasks.Count(t => t.Status == TaskItemStatus.Pending);
+            item.CompletedTasksCount = tasks.Count(t => t.Status == TaskItemStatus.Completed);
+
+            // Preenche a lista de tarefas concluídas
+            item.CompletedTasks = tasks
+                .Where(t => t.Status == TaskItemStatus.Completed)
+                .Select(t => new TaskItemSummaryDto
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    CompletedAt = t.CompletedAt
+                })
+                .ToList();
+
             return Ok(item);
         }
 

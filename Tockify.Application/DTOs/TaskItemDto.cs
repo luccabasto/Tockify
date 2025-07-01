@@ -1,13 +1,19 @@
-﻿namespace Tockify.Application.DTOs
+﻿
+
+using Tockify.Domain.Enums;
+
+namespace Tockify.Application.DTOs
 {
     public class TaskItemDto
     {
-        public Guid Id { get; set; }
-        public Guid TaskListId { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string Id { get; set; } = null!;
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
         public DateTime DueDate { get; set; }
-        public bool IsCompleted { get; set; }
+        public TaskItemStatus Status { get; set; }
+        public string ToDoId { get; set; } = null!;
+        public int CreatedByUserId { get; set; }
     }
 }
