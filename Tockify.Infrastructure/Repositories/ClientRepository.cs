@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using Tockify.Domain.Enums;
 using Tockify.Domain.Models;
@@ -86,6 +85,39 @@ namespace Tockify.Infrastructure.Repositories
             var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Id, userId);
             var update = Builders<ClientUserModel>.Update.Inc(u => u.IncompleteToDosCount, -1);
             await _collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<(List<ClientUserModel>, long)> GetPagedAsync(UserProfile profile, bool? isActive, int skip, int take)
+        {
+            var filter = Builders<ClientUserModel>.Filter.Eq(u => u.Profile, profile);
+            if (isActive.HasValue)
+            {
+                filter &= Builders<ClientUserModel>.Filter.Eq(u => u.IsActive, isActive.Value);
+            }
+            var total = await _collection.CountDocumentsAsync(filter);
+            var users = await _collection.Find(filter)
+                                         .Skip(skip)
+                                         .Limit(take)
+                                         .ToListAsync();
+            return (users, total);
+        }
+
+        public async Task<List<ClientUserModel>> GetAllClientUsersAsync(UserProfile profile, bool? isActive = null, string? name = null)
+        {
+            var builder = Builders<ClientUserModel>.Filter;
+            var filter = builder.Eq(u => u.Profile, profile);
+
+            if (isActive.HasValue)
+                filter &= builder.Eq(u => u.IsActive, isActive.Value);
+
+            if (!string.IsNullOrWhiteSpace(name))
+                filter &= builder.Regex(
+                    u => u.Name,
+                    new BsonRegularExpression(name, "i"));
+
+            return await _collection
+                .Find(filter)
+                .ToListAsync();
         }
     }
 }

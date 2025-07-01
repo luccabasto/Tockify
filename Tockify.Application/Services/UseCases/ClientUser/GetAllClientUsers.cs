@@ -19,20 +19,16 @@ namespace Tockify.Application.Services.UseCases.ClientUser
             _todoRepo = todoRepo;
         }
 
-        public async Task<List<ClientUserDto>> GetAllClient(UserProfile? profile = null)
+        public async Task<List<ClientUserDto>> GetAllClient(UserProfile? profile, bool? isActive, string? name)
         {
-            var users = profile.HasValue
-                ? await _clientRepo.GetAllClientUsersAsync(profile.Value)
-                : await _clientRepo.GetAllClientUsersAsync(profile.Value);
+            var p = profile ?? UserProfile.Client;
+            var users = await _clientRepo.GetAllClientUsersAsync(p, isActive, name);
 
             var dtos = new List<ClientUserDto>();
-
             foreach (var u in users)
             {
                 var dto = _mapper.Map<ClientUserDto>(u);
-
                 var todos = await _todoRepo.GetByUserAsync(u.Id);
-
                 dto.ToDos = todos.Select(t => new ToDoSummaryDto
                 {
                     Id = t.Id,

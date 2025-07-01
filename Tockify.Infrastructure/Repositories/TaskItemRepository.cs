@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using Tockify.Domain.Models;
 using Tockify.Domain.Repository.Interface;
+using Tockify.Infrastructure.Context;
 
 namespace Tockify.Infrastructure.Repositories
 {
@@ -8,9 +9,9 @@ namespace Tockify.Infrastructure.Repositories
     {
         private readonly IMongoCollection<TaskItemModel> _taskCollection;
 
-        public TaskItemRepository(IMongoDatabase database)
+        public TaskItemRepository(MongoContext database)
         {
-            _taskCollection = database.GetCollection<TaskItemModel>("TaskItems");
+            _taskCollection = database.Database.GetCollection<TaskItemModel>("TaskItems");
         }
 
         public async Task<TaskItemModel> CreateTaskItemAsync(TaskItemModel task)

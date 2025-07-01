@@ -2,6 +2,7 @@
 using Tockify.Application.Command.ClientUser;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ClientUser;
+using Tockify.Domain.Enums;
 
 namespace Tockify.WebAPI.Controllers
 {
@@ -38,9 +39,12 @@ namespace Tockify.WebAPI.Controllers
         /// </summary>
         /// <returns>Uma lista de usuários do tipo Client.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientUserDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ClientUserDto>>> GetAll(
+            [FromQuery] UserProfile? profile,
+            [FromQuery] bool? isActive,
+            [FromQuery] string? name)
         {
-            var dtos = await _getAllUseCase.GetAllClient();
+            var dtos = await _getAllUseCase.GetAllClient(profile, isActive, name);
             return Ok(dtos);
         }
 
