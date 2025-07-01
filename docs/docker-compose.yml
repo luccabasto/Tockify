@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "903a8aea-7e3e-4b90-ade0-aa1517bd242b",
+		"name": "Tockify",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38848096"
+	},
+	"item": [
+		{
+			"name": "ClientUser",
+			"item": [
+				{
+					"name": "Criar Client User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ophelia Worthington\",\n    \"email\": \"ophelia.worthington@icloud.com\",\n    \"password\": \"Re4%Ks7U\",\n    \"gender\": \"Mulher\",\n    \"profile\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5115/api/ClientUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar todos os Client User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"isabella.montgomery@nova.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5115/api/ClientUser/"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar os Client User por params",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5115/api/ClientUser/?name=Lancaster",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"ClientUser",
+								""
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Lancaster"
+								},
+								{
+									"key": "isActive",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Client User pelo Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:5115/api/ClientUser/21"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Client User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 7,\r\n    \"name\": \"Isabella Montgomery\",\r\n    \"email\": \"isabella.montgomery@nova.com\",\r\n    \"password\": \"NovaSenha@123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5115/api/ClientUser/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"ClientUser",
+								"7"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "isabella.montgomery@nova.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir Client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5115/api/ClientUser/4?callerProfile=Client",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"ClientUser",
+								"4"
+							],
+							"query": [
+								{
+									"key": "callerProfile",
+									"value": "Client"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ToDo",
+			"item": [
+				{
+					"name": "Criar ToDo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"64b8f3e2a7c8c12d34ef5678\",\r\n  \"title\": \"Comprar itens de escritório\",\r\n  \"description\": \"Canetas, pastas e clipes\",\r\n  \"flags\": [\"escritorio\", \"urgente\"],\r\n  \"status\": 1,\r\n  \"dueDate\": \"2025-07-15T14:30:00Z\",\r\n  \"taskItemId\": 5,\r\n  \"createdByUserId\": 6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5115/api/ToDo",
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:5115/api/ToDo' \\\r\n  -H 'accept: text/plain' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"title\": \"Comprar materiais\",\r\n  \"description\": \"Caneta, papel e grampeador\",\r\n  \"flags\": [\"escritorio\"],\r\n  \"dueDate\": \"2025-07-10T12:00:00Z\",\r\n  \"createdByUserId\": 6\r\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar ToDo por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5115/api/ToDo/?userId=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"ToDo",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar ToDo",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"6863832ac0293351d9d2a66a\",\r\n  \"title\": \"Comprar itens de escritório\",\r\n  \"description\": \"Canetas, pastas e clipes\",\r\n  \"flags\": [\"escritorio\", \"urgente\"],\r\n  \"status\": 1,\r\n  \"dueDate\": \"2025-07-15T14:30:00Z\",\r\n  \"taskItemId\": 5,\r\n  \"createdByUserId\": 6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5115/api/ToDo/6863832ac0293351d9d2a66a/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TaskItem",
+			"item": [
+				{
+					"name": "Buscar TaskItem por ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Extrair relatórios\",\r\n    \"description\": \"Coletar dados do sistema\",\r\n    \"dueDate\": \"2025-07-12T10:00:00Z\",\r\n    \"toDoId\": \"68638e2dea09af5ddc94c1e1\",\r\n    \"createdByUserId\": 6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5115/api/TaskItem?toDoId=68638e2dea09af5ddc94c1e1&userId=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"TaskItem"
+							],
+							"query": [
+								{
+									"key": "toDoId",
+									"value": "68638e2dea09af5ddc94c1e1"
+								},
+								{
+									"key": "userId",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar TaskItem",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Extrair relatórios\",\r\n    \"description\": \"Coletar dados do sistema\",\r\n    \"dueDate\": \"2025-07-12T10:00:00Z\",\r\n    \"toDoId\": \"68638e2dea09af5ddc94c1e1\",\r\n    \"createdByUserId\": 6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5115/api/TaskItem?toDoId=68638e2dea09af5ddc94c1e1&userId=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"TaskItem"
+							],
+							"query": [
+								{
+									"key": "toDoId",
+									"value": "68638e2dea09af5ddc94c1e1"
+								},
+								{
+									"key": "userId",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar TaskItem",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"68638fa7ea09af5ddc94c1e2\",\r\n  \"title\": \"Extrair relatórios\",\r\n  \"description\": \"Coletar dados do sistema\",\r\n  \"dueDate\": \"2025-07-12T10:00:00Z\",\r\n  \"isCompleted\": true,\r\n  \"status\": 1,\r\n  \"createdByUserId\": 6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5115/api/TaskItem?toDoId=68638e2dea09af5ddc94c1e1&userId=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5115",
+							"path": [
+								"api",
+								"TaskItem"
+							],
+							"query": [
+								{
+									"key": "toDoId",
+									"value": "68638e2dea09af5ddc94c1e1"
+								},
+								{
+									"key": "userId",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
