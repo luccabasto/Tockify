@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tockify.Application.Command.ToDo;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ToDo;

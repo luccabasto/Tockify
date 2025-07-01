@@ -18,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MongoContext>();
 builder.Services.AddScoped<IClientUserRepository, ClientUserRepository>();
 builder.Services.AddScoped<IToDoListRepository, ToDoRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
 // --- AutoMapper ---
 builder.Services.AddAutoMapper(typeof(ClientUserProfile));
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IDeleteToDoCase, DeleteToDoCase>();
 
 // ---  TaskItem ---
 builder.Services.AddScoped<ICreateTaskItemCase, CreateTaskItemUseCase>();
+
 builder.Services.AddScoped<IGetTaskItemByIdCase, GetTaskItemById>();
 builder.Services.AddScoped<IGetToDoTasksCase, GetToDoTaskCase>();
 builder.Services.AddScoped<IUpdateTaskItemCase, UpdateTaskItemCase>();
@@ -59,8 +61,11 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tockify API V1"));
-
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tockify API V1");
+    c.RoutePrefix = string.Empty;
+});
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

@@ -5,13 +5,11 @@ namespace Tockify.Domain.Enums
 {
     public enum UserProfile
     {
-        [Description("User ID")]
-        Id,
 
-        [Description("ADM User")]
-        Admin,
+        [Description("ADMUser")]
+        Admin = 0,
 
-        [Description("Client User")]
-        Client,
+        [Description("ClientUser")]
+        Client = 1,
     }
 }

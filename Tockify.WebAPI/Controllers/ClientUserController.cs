@@ -2,6 +2,7 @@
 using Tockify.Application.Command.ClientUser;
 using Tockify.Application.DTOs;
 using Tockify.Application.Services.Interfaces.ClientUser;
+using Tockify.Domain.Enums;
 
 namespace Tockify.WebAPI.Controllers
 {
@@ -38,9 +39,12 @@ namespace Tockify.WebAPI.Controllers
         /// </summary>
         /// <returns>Uma lista de usuários do tipo Client.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientUserDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ClientUserDto>>> GetAll(
+            [FromQuery] UserProfile? profile,
+            [FromQuery] bool? isActive,
+            [FromQuery] string? name)
         {
-            var dtos = await _getAllUseCase.GetAllClient();
+            var dtos = await _getAllUseCase.GetAllClient(profile, isActive, name);
             return Ok(dtos);
         }
 
@@ -89,7 +93,9 @@ namespace Tockify.WebAPI.Controllers
         /// </summary>
         /// <returns>O usuário atualizado ou uma mensagem de erro.</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<ClientUserDto>> UpdateClient(int id, [FromBody] UpdateClientUserCommand command)
+        public async Task<ActionResult<ClientUserDto>> UpdateClient(int id,
+            [FromQuery] string? email,
+            [FromBody] UpdateClientUserCommand command)
         {
             try
             {
@@ -97,7 +103,7 @@ namespace Tockify.WebAPI.Controllers
                 {
                     return BadRequest(new { message = "ID do usuário não corresponde ao ID do comando." });
                 }
-                var updatedDto = await _updateUseCase.UpdateClientUser(command);
+                var updatedDto = await _updateUseCase.UpdateClientUser(command, email);
                 return Ok(updatedDto);
             }
             catch (Exception ex)
@@ -107,16 +113,28 @@ namespace Tockify.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteClient(int id)
+        public async Task<ActionResult> DeleteClient(int id, [FromQuery] UserProfile callerProfile)
         {
             try
             {
-                await _deleteUseCase.DeleteClientUser(id);
-                return NoContent();
+                await _deleteUseCase.DeleteClientUser(id, callerProfile);
+                return Ok(new { message = $"Usuário com ID {id} excluído com sucesso." });
+            }
+            catch (UnauthorizedAccessException uae)
+            {
+                return Forbid(new { message = "Acesso não autorizado para excluir o usuário.", error = uae.Message }.ToString());
+            }
+            catch (ArgumentException ae)
+            {
+                return BadRequest(new { message = "Parâmetros inválidos para exclusão do usuário.", error = ae.Message });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return NotFound(new { message = $"Usuário com ID {id} não encontrado para exclusão.", error = ioe.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "Erro ao excluir usuário do tipo Client.", error = ex.Message });
+                return StatusCode(500, new { message = "Erro inesperado ao excluir usuário.", error = ex.Message });
             }
         }
     }
