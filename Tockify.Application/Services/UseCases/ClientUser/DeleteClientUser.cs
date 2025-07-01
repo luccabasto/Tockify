@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tockify.Application.Services.Interfaces.ClientUser;
+﻿using Tockify.Application.Services.Interfaces.ClientUser;
+using Tockify.Domain.Enums;
 using Tockify.Domain.Repository.Interface;
 
 namespace Tockify.Application.Services.UseCases.ClientUser
@@ -17,10 +13,13 @@ namespace Tockify.Application.Services.UseCases.ClientUser
             _repository = repository;
         }
 
-        public async Task DeleteClientUser(int id)
+        public async Task DeleteClientUser(int id, UserProfile callerProfile)
         {
+            if (callerProfile != UserProfile.Admin)
+                throw new UnauthorizedAccessException("Apenas administradores podem excluir usuários.");
+
             if (id <= 0)
-                throw new ArgumentException("O ID deve ser maior que zero.");
+                throw new ArgumentException("O ID deve ser maior que zero.", nameof(id));
 
             var existing = await _repository.GetUserByIdAsync(id);
             if (existing == null)

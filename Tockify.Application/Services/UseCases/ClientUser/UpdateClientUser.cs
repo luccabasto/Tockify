@@ -17,7 +17,7 @@ namespace Tockify.Application.Services.UseCases.ClientUser
             _mapper = mapper;
         }
 
-        public async Task<ClientUserDto> UpdateClientUser(UpdateClientUserCommand command)
+        public async Task<ClientUserDto> UpdateClientUser(UpdateClientUserCommand command, string? email)
         {
             if (command.Id <= 0)
                 throw new ArgumentException("O ID deve ser maior que zero.");
