@@ -28,21 +28,17 @@ namespace Tockify.Application.Services.UseCases.ToDo
         public async Task<ToDoDto> CreateToDoAsync(CreateToDoCommand command)
         {
             if (string.IsNullOrWhiteSpace(command.Title))
-                throw new ArgumentException("Title cannot be empty", nameof(command.Title));
+                throw new ArgumentException("Título não pode ser vazio", nameof(command.Title));
 
             if (string.IsNullOrWhiteSpace(command.Description))
-                throw new ArgumentException("Description cannot be empty", nameof(command.Description));
+                throw new ArgumentException("Descrição não pode ser vazia", nameof(command.Description));
 
             if (command.Flags is null || command.Flags.Count == 0)
                 throw new ArgumentException("Ao menos uma flag é obrigatória.");
 
             // Regras
-
             var user = await _clientUserRepo.GetUserByIdAsync(command.CreatedByUserId) ??
                 throw new ArgumentException("Usuário não encontrado.", nameof(command.CreatedByUserId));
-
-            if (command.DueDate != null && command.DueDate < DateTime.UtcNow)
-                throw new ArgumentException("DueDate não pode ser anterior à data atual.", nameof(command.DueDate));
 
             var model = _mapper.Map<ToDoModel>(command);
             model.Status = command.Status ?? ToDoStatus.ToDo;

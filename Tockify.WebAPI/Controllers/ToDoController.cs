@@ -41,6 +41,14 @@ namespace Tockify.WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ToDoDto>> Post([FromBody] CreateToDoCommand command)
         {
+            if (command.DueDate < DateTime.UtcNow)
+            {
+                return BadRequest(new
+                {
+                    message = "DueDate não pode ser anterior à data atual."
+                });
+            }
+
             var dto = await _createCase.CreateToDoAsync(command);
             return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
         }
